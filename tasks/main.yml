@@ -7,6 +7,9 @@
   changed_when: false
   become: true
 
+- name: Include vars for the required OS family
+  include_vars: "{{ ansible_facts['os_family'] }}.yml"
+
 - name: Make sure required packages are installed
   package:
     name: "{{ packages }}"
