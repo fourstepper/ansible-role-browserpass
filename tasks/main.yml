@@ -1,0 +1,60 @@
+---
+# tasks file for ansible-role-browserpass
+- name: Make sure required packages are installed
+  package:
+    name: "{{ packages }}"
+    state: present
+  become: true
+
+- name: Clone the repository for browserpass-native
+  git:
+    repo: "https://github.com/browserpass/browserpass-native"
+    dest: "{{ src_dir }}/browserpass-native"
+    force: true
+  changed_when: false
+
+- name: Make browserpass-native
+  make:
+    chdir: "{{ src_dir }}/browserpass-native"
+    target: browserpass
+
+- name: Make configuration files
+  make:
+    chdir: "{{ src_dir }}/browserpass-native"
+    target: configure
+  changed_when: false
+
+- name: Install Browserpass
+  shell:
+    cmd: sudo make install
+    chdir: "{{ src_dir }}/browserpass-native"
+    warn: false
+  changed_when: false
+
+- name: Configure for Firefox
+  shell:
+    cmd: make hosts-firefox-user
+    chdir: "{{ src_dir }}/browserpass-native"
+  when: install_firefox is defined and install_firefox
+  changed_when: false
+
+- name: Configure for Chromium
+  shell:
+    cmd: make hosts-chromium-user
+    chdir: "{{ src_dir }}/browserpass-native"
+  when: install_chromium is defined and install_chromium
+  changed_when: false
+
+- name: Configure for Google Chrome
+  shell:
+    cmd: make hosts-chrome-user
+    chdir: "{{ src_dir }}/browserpass-native"
+  when: install_chrome is defined and install_chrome
+  changed_when: false
+
+- name: Configure for Brave Browser
+  shell:
+    cmd: make hosts-brave-user
+    chdir: "{{ src_dir }}/browserpass-native"
+  when: install_brave is defined and install_brave
+  changed_when: false

@@ -1,0 +1,8 @@
+---
+# defaults file for ansible-role-browserpass
+src_dir: "$HOME/.src"
+
+packages:
+  - git
+  - go
+  - make
